@@ -1,0 +1,58 @@
+---
+- name: Install nginx
+  hosts: ec2-instance
+  become: true
+
+  tasks:
+  - name: Clean Yum
+    command: yum clean all
+
+  - name: Enable EPEL
+    command: yum-config-manager --enable epel
+
+  - name: Install nginx
+    command: amazon-linux-extras install nginx1 -y
+
+  - name: Insert Index Page
+    template:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+
+  - name: Copy NGINX config file
+    copy:
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
+
+  - name: Start NGiNX
+    service:
+      name: nginx
+      state: started
+
+  - name: Configure Python Log Scripts
+    template:
+      src: logprocess.py
+      dest: ~/
+
+  - name: Configure Python SQL Scripts
+    template:
+      src: generateDB.py
+      dest: ~/
+
+  - name: intall pip3
+    command: yum install pip3 -y
+
+  - name: Configure python env
+    command: pip3 install mysqlclient mysql-connector watchdog datetime 
+
+  - name: Install mySQL
+    command: yum install mysql-server -y
+
+  - name: Enable mySQL restart
+    command: chkconfig mysqld on
+
+  - name: start mySQL
+    command: service mysqld start
+
+  - name: configure mySQL
+    command: mysqladmin -u root password [your_new_pwd]
+
