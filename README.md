@@ -9,7 +9,7 @@
  - Linux environment with Ansible installed
  - Access to key pairs for EC2 Instances
  - Straight SSH access
-
+## Steps :
 The first step is to clone and enter the github repository:
 
 `git clone https://github.com/moonbeam87/terraform-job-ansible.git`
@@ -47,3 +47,12 @@ The next step you shoud take is to run the playbook:
 `ansible-playbook nginx.yml`
 
 This will run the playbook on the EC2 Instance, and you should be good to go. ***Don't forget to look through all the files to enter in the proper ARNs, file paths, variables, etc. The nginx config has an SSL part that's commented out, you will have to put in your variables there as well***
+
+After establishing that the playbook will run on Ansible, the next step will be to log into AWS Lambda, and set up a trigger to the function from the correct SQS Queue. 
+
+***Before you can test and run your function however, you will need to establish proper permissions***:
+1. Go to the IAM Console and find the role Terraform created. 
+2. Add SQS and EC2 privelages.
+3. Check over the security groups on the EC2 Instance(s) to make sure that proper connection types are allowed.
+
+This [repository](https://github.com/moonbeam87/LambdaExample) has a test event JSON file you can use to test the Lambda Function after you fill in the correct variables in the function
